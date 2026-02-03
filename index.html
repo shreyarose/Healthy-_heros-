@@ -3,237 +3,239 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Healthy Heroes 30-Day Challenge</title>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;700&display=swap" rel="stylesheet">
+<title>Healthy Heroes – 30 Days</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
 body {
-    font-family: 'Baloo 2', cursive;
+    font-family: 'Nunito', sans-serif;
     margin: 0;
-    padding: 0;
-    background: linear-gradient(135deg, #ffe082, #ffcc80);
-    text-align: center;
+    background: linear-gradient(180deg, #e0f7fa, #fff);
+    min-height: 100vh;
 }
 
+/* Header */
 header {
-    background: linear-gradient(90deg, #ff6f61, #ffb74d);
-    color: white;
-    padding: 30px 20px;
-    font-size: 32px;
-    font-weight: 700;
-    border-bottom-left-radius: 25px;
-    border-bottom-right-radius: 25px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-}
-
-.container {
-    max-width: 700px;
-    margin: 30px auto;
-    background: white;
-    border-radius: 25px;
     padding: 25px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    text-align: center;
+    font-size: 26px;
+    font-weight: 700;
+    color: #00695c;
 }
 
+/* Main card */
+.card {
+    max-width: 420px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 28px;
+    padding: 25px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+}
+
+/* Username */
 input {
-    padding: 12px;
+    width: 100%;
+    padding: 14px;
+    border-radius: 16px;
+    border: none;
+    background: #f1fdfb;
     font-size: 16px;
-    border-radius: 12px;
-    border: 1px solid #ccc;
-    width: 60%;
+    outline: none;
 }
 
 button {
-    padding: 12px 25px;
-    font-size: 16px;
-    border-radius: 12px;
+    width: 100%;
+    margin-top: 15px;
+    padding: 14px;
+    border-radius: 16px;
     border: none;
-    background: linear-gradient(90deg, #ff6f61, #ffb74d);
+    font-size: 16px;
+    font-weight: 700;
+    background: linear-gradient(90deg, #4db6ac, #81c784);
     color: white;
-    font-weight: bold;
     cursor: pointer;
-    transition: 0.3s;
 }
 
-button:hover {
-    transform: scale(1.05);
+button:active {
+    transform: scale(0.97);
 }
 
-.challenge-list {
-    list-style: none;
-    padding: 0;
+/* Day + Progress */
+.day {
+    text-align: center;
+    font-weight: 700;
+    font-size: 20px;
+    color: #00796b;
 }
 
-.challenge-list li {
+.progress {
+    margin: 15px 0;
+    height: 10px;
+    background: #e0f2f1;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #4db6ac, #81c784);
+    transition: 0.4s;
+}
+
+/* Challenges */
+.task {
+    background: #f7fffe;
+    border-radius: 18px;
+    padding: 14px;
+    margin: 12px 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px;
-    margin: 10px 0;
-    border-radius: 20px;
-    background: linear-gradient(135deg, #ff6f61, #ffb74d);
-    color: white;
     font-weight: 600;
 }
 
-.challenge-list li.completed {
-    background: linear-gradient(135deg, #81c784, #4caf50);
+.task.completed {
+    opacity: 0.6;
     text-decoration: line-through;
 }
 
-#day {
-    font-size: 24px;
+.task button {
+    width: auto;
+    padding: 8px 14px;
+    font-size: 14px;
+    background: #4db6ac;
+}
+
+/* Score */
+.score {
+    margin-top: 15px;
     font-weight: 700;
-    margin: 15px 0;
+    text-align: center;
+    color: #00695c;
 }
 
-#score {
+/* Next day */
+#nextDay {
+    display: none;
+    background: linear-gradient(90deg, #81c784, #aed581);
+}
+
+/* Finish */
+.finish {
+    text-align: center;
     font-size: 20px;
-    margin-top: 15px;
-    font-weight: bold;
-}
-
-#reward {
-    margin-top: 15px;
-    font-size: 18px;
-    font-weight: bold;
-    color: #ff6f00;
+    font-weight: 700;
+    color: #388e3c;
 }
 </style>
 </head>
 
 <body>
 
-<header>Healthy Heroes 30-Day Challenge</header>
+<header>🌱 Healthy Heroes</header>
 
-<div class="container">
+<div class="card">
 
-<!-- USERNAME -->
-<div id="username-section">
-    <h2>Enter your username</h2>
-    <input type="text" id="username" placeholder="Username">
-    <br><br>
-    <button onclick="start()">Start Challenge</button>
-</div>
+  <div id="user">
+    <p>What’s your name?</p>
+    <input id="name" placeholder="Your name 🌸">
+    <button onclick="start()">Start</button>
+  </div>
 
-<!-- CHALLENGE -->
-<div id="challenge-section" style="display:none;">
-    <h2>Hello, <span id="displayName"></span> 👋</h2>
-    <div id="day"></div>
+  <div id="challenge" style="display:none;">
+    <div class="day" id="dayText"></div>
 
-    <ul class="challenge-list" id="challengeList"></ul>
+    <div class="progress">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
 
-    <button id="nextDayBtn" style="display:none;" onclick="nextDay()">Next Day ➡️</button>
+    <div id="tasks"></div>
 
-    <div id="score"></div>
-    <div id="reward"></div>
-</div>
+    <div class="score" id="score"></div>
+
+    <button id="nextDay" onclick="nextDay()">Next day 🌼</button>
+  </div>
 
 </div>
 
 <script>
-// =====================
-// DATA
-// =====================
-const challenges = [
-  { text: "Drink water 💧", points: 3 },
-  { text: "Eat fruit 🍎", points: 3 },
-  { text: "Drink Healthy Heroes 🥤", points: 4 },
-  { text: "Move your body 💪", points: 5 }
+const tasks = [
+  "Drink water 💧",
+  "Eat a fruit 🍓",
+  "Move your body 🧘",
+  "Eat something green 🥬",
+  "Take a deep breath 🌬️"
 ];
 
 let day = Number(localStorage.getItem("day")) || 1;
 let score = Number(localStorage.getItem("score")) || 0;
-let username = localStorage.getItem("username") || "";
+let name = localStorage.getItem("name") || "";
 
-// =====================
-// LOAD USER
-// =====================
-if (username) start(true);
-
-function start(auto = false) {
-    if (!auto) {
-        username = document.getElementById("username").value;
-        localStorage.setItem("username", username);
-    }
-
-    document.getElementById("displayName").innerText = username;
-    document.getElementById("username-section").style.display = "none";
-    document.getElementById("challenge-section").style.display = "block";
-
-    updateUI();
-    loadChallenges();
+function start(){
+  name = document.getElementById("name").value;
+  if(!name) return;
+  localStorage.setItem("name", name);
+  showChallenge();
 }
 
-// =====================
-// UI
-// =====================
-function updateUI() {
-    document.getElementById("day").innerText = `Day ${day} of 30`;
-    document.getElementById("score").innerText = `Score: ${score}`;
+function showChallenge(){
+  document.getElementById("user").style.display = "none";
+  document.getElementById("challenge").style.display = "block";
+  updateUI();
 }
 
-function loadChallenges() {
-    const list = document.getElementById("challengeList");
-    list.innerHTML = "";
-    document.getElementById("nextDayBtn").style.display = "none";
-
-    challenges.forEach(ch => {
-        const li = document.createElement("li");
-        li.innerHTML = `<span>${ch.text}</span>`;
-
-        const btn = document.createElement("button");
-        btn.innerText = "Complete";
-        btn.onclick = () => complete(li, ch.points);
-
-        li.appendChild(btn);
-        list.appendChild(li);
-    });
+function updateUI(){
+  document.getElementById("dayText").textContent = `Day ${day} of 30 🌸`;
+  document.getElementById("score").textContent = `Score: ${score}`;
+  document.getElementById("progressBar").style.width = `${(day/30)*100}%`;
+  loadTasks();
 }
 
-// =====================
-// GAME LOGIC
-// =====================
-function complete(li, points) {
-    if (!li.classList.contains("completed")) {
-        li.classList.add("completed");
-        score += points;
+function loadTasks(){
+  const container = document.getElementById("tasks");
+  container.innerHTML = "";
+  tasks.forEach(t=>{
+    const div = document.createElement("div");
+    div.className = "task";
+    div.innerHTML = `<span>${t}</span><button>Done</button>`;
+    div.querySelector("button").onclick = ()=>{
+      if(!div.classList.contains("completed")){
+        div.classList.add("completed");
+        score += 5;
         localStorage.setItem("score", score);
         updateUI();
-
-        if (document.querySelectorAll(".completed").length === challenges.length) {
-            document.getElementById("nextDayBtn").style.display = "inline-block";
-        }
-
-        checkReward();
-    }
+        checkAllDone();
+      }
+    };
+    container.appendChild(div);
+  });
 }
 
-function nextDay() {
-    if (day < 30) {
-        day++;
-        localStorage.setItem("day", day);
-        loadChallenges();
-        updateUI();
-    } else {
-        document.getElementById("day").innerText = "🎉 Challenge Completed!";
-        document.getElementById("challengeList").innerHTML = "";
-        document.getElementById("nextDayBtn").style.display = "none";
-        document.getElementById("reward").innerText = "🏆 You finished all 30 days!";
-    }
+function checkAllDone(){
+  const done = document.querySelectorAll(".completed").length;
+  if(done === tasks.length){
+    document.getElementById("nextDay").style.display = "block";
+  }
 }
 
-// =====================
-// REWARDS
-// =====================
-function checkReward() {
-    if (score >= 100 && score < 200) {
-        document.getElementById("reward").innerText = "🎉 Small reward unlocked!";
-    } else if (score >= 200) {
-        document.getElementById("reward").innerText = "🏆 Big reward unlocked!";
-    }
+function nextDay(){
+  if(day < 30){
+    day++;
+    localStorage.setItem("day", day);
+    document.getElementById("nextDay").style.display = "none";
+    updateUI();
+  } else {
+    document.getElementById("challenge").innerHTML =
+      `<div class="finish">🎉 You completed all 30 days!<br>Final score: ${score}</div>`;
+  }
 }
+
+if(name) showChallenge();
 </script>
 
 </body>
 </html>
+
