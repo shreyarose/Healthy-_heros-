@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Healthy Heroes – 30 Days</title>
+<title>Healthy Heroes – Proof Challenge</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
 
@@ -11,7 +11,7 @@
 body {
   font-family: 'Nunito', sans-serif;
   margin: 0;
-  background: linear-gradient(180deg, #e8fdf5, #ffffff);
+  background: linear-gradient(180deg, #e8fff5, #ffffff);
   min-height: 100vh;
 }
 
@@ -45,11 +45,16 @@ input {
 }
 
 button {
-  margin-top: 15px;
+  margin-top: 10px;
   font-weight: 700;
   background: linear-gradient(90deg, #66bb6a, #4db6ac);
   color: white;
   cursor: pointer;
+}
+
+button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
 }
 
 .day {
@@ -59,54 +64,28 @@ button {
   color: #388e3c;
 }
 
-.progress {
-  height: 10px;
-  background: #e0f2f1;
-  border-radius: 20px;
-  margin: 15px 0;
-}
-
-.progress-bar {
-  height: 100%;
-  background: linear-gradient(90deg, #66bb6a, #4db6ac);
-  width: 0%;
-  border-radius: 20px;
-  transition: 0.4s;
-}
-
 .task {
   background: #f6fffb;
   border-radius: 18px;
   padding: 14px;
   margin: 12px 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: 600;
 }
 
 .task.completed {
   text-decoration: line-through;
   opacity: 0.6;
+  pointer-events: none;
 }
 
-.task button {
-  width: auto;
-  padding: 8px 14px;
-  font-size: 14px;
-  background: #81c784;
+.task img {
+  width: 100%;
+  border-radius: 12px;
+  margin-top: 8px;
 }
 
 #nextDay {
   display: none;
   background: linear-gradient(90deg, #aed581, #81c784);
-}
-
-.finish {
-  text-align: center;
-  font-size: 20px;
-  font-weight: 700;
-  color: #2e7d32;
 }
 </style>
 </head>
@@ -125,117 +104,132 @@ button {
 
   <div id="challenge" style="display:none;">
     <div class="day" id="dayText"></div>
-
-    <div class="progress">
-      <div class="progress-bar" id="progressBar"></div>
-    </div>
-
     <div id="tasks"></div>
-
     <button id="nextDay" onclick="nextDay()">Next Day ➡️</button>
   </div>
 
 </div>
 
 <script>
-// 🌈 DAILY TASKS (30 DAYS)
-const dailyChallenges = [
-  ["Drink water 💧", "Eat an apple 🍎", "Move 10 minutes 🚶"],
-  ["Drink a smoothie 🥤", "Eat a banana 🍌", "Stretch 🧘"],
-  ["Drink water 💧", "Eat carrots 🥕", "Take deep breaths 🌬️"],
-  ["Drink milk 🥛", "Eat yogurt 🍦", "Move your body 💃"],
-  ["Drink water 💧", "Eat berries 🍓", "Go outside 🌤️"],
-  ["Drink herbal tea 🍵", "Eat an orange 🍊", "Stretch 🧘"],
-  ["Drink water 💧", "Eat cucumber 🥒", "Walk 🚶"],
-  ["Drink smoothie 🥤", "Eat avocado 🥑", "Relax 🌿"],
-  ["Drink water 💧", "Eat grapes 🍇", "Jump a little 🤸"],
-  ["Drink milk 🥛", "Eat eggs 🍳", "Stretch 🧘"],
+// DAILY TASKS (food + drink)
+const days = [
+  ["Eat an apple 🍎", "Drink water 💧"],
+  ["Eat a banana 🍌", "Drink a smoothie 🥤"],
+  ["Eat carrots 🥕", "Drink water 💧"],
+  ["Eat yogurt 🍦", "Drink milk 🥛"],
+  ["Eat berries 🍓", "Drink water 💧"],
+  ["Eat orange 🍊", "Drink tea 🍵"],
+  ["Eat cucumber 🥒", "Drink water 💧"],
+  ["Eat avocado 🥑", "Drink smoothie 🥤"],
+  ["Eat grapes 🍇", "Drink water 💧"],
+  ["Eat eggs 🍳", "Drink milk 🥛"],
 
-  ["Drink water 💧", "Eat pear 🍐", "Move 10 minutes"],
-  ["Drink tea 🍵", "Eat broccoli 🥦", "Breathe slowly"],
-  ["Drink water 💧", "Eat mango 🥭", "Walk outside"],
-  ["Drink smoothie 🥤", "Eat nuts 🥜", "Stretch"],
-  ["Drink water 💧", "Eat salad 🥗", "Dance 💃"],
-  ["Drink milk 🥛", "Eat cheese 🧀", "Relax"],
-  ["Drink water 💧", "Eat kiwi 🥝", "Move around"],
-  ["Drink tea 🍵", "Eat spinach 🥬", "Stretch"],
-  ["Drink water 💧", "Eat apple 🍎", "Breathe"],
-  ["Drink smoothie 🥤", "Eat banana 🍌", "Walk"],
+  ["Eat pear 🍐", "Drink water 💧"],
+  ["Eat broccoli 🥦", "Drink tea 🍵"],
+  ["Eat mango 🥭", "Drink water 💧"],
+  ["Eat nuts 🥜", "Drink smoothie 🥤"],
+  ["Eat salad 🥗", "Drink water 💧"],
+  ["Eat cheese 🧀", "Drink milk 🥛"],
+  ["Eat kiwi 🥝", "Drink water 💧"],
+  ["Eat spinach 🥬", "Drink tea 🍵"],
+  ["Eat apple 🍎", "Drink water 💧"],
+  ["Eat banana 🍌", "Drink smoothie 🥤"],
 
-  ["Drink water 💧", "Eat berries 🍓", "Stretch"],
-  ["Drink milk 🥛", "Eat yogurt 🍦", "Relax"],
-  ["Drink water 💧", "Eat carrots 🥕", "Move"],
-  ["Drink tea 🍵", "Eat orange 🍊", "Breathe"],
-  ["Drink water 💧", "Eat cucumber 🥒", "Walk"],
-  ["Drink smoothie 🥤", "Eat avocado 🥑", "Stretch"],
-  ["Drink water 💧", "Eat grapes 🍇", "Move"],
-  ["Drink milk 🥛", "Eat eggs 🍳", "Relax"],
-  ["Drink water 💧", "Eat salad 🥗", "Dance"],
-  ["Drink water 💧", "Celebrate 🎉", "Smile 😊"]
+  ["Eat berries 🍓", "Drink water 💧"],
+  ["Eat yogurt 🍦", "Drink milk 🥛"],
+  ["Eat carrots 🥕", "Drink water 💧"],
+  ["Eat orange 🍊", "Drink tea 🍵"],
+  ["Eat cucumber 🥒", "Drink water 💧"],
+  ["Eat avocado 🥑", "Drink smoothie 🥤"],
+  ["Eat grapes 🍇", "Drink water 💧"],
+  ["Eat eggs 🍳", "Drink milk 🥛"],
+  ["Eat salad 🥗", "Drink water 💧"],
+  ["Celebrate 🎉", "Smile 😊"]
 ];
 
 let day = Number(localStorage.getItem("day")) || 1;
 let name = localStorage.getItem("name") || "";
 
-// START
-function start() {
+function start(){
   name = document.getElementById("name").value;
-  if (!name) return;
+  if(!name) return;
   localStorage.setItem("name", name);
   show();
 }
 
-function show() {
+function show(){
   document.getElementById("user").style.display = "none";
   document.getElementById("challenge").style.display = "block";
   loadDay();
 }
 
-// LOAD DAY
-function loadDay() {
+function loadDay(){
   document.getElementById("dayText").textContent = `Day ${day} of 30 🌱`;
-  document.getElementById("progressBar").style.width = `${(day / 30) * 100}%`;
+  const box = document.getElementById("tasks");
+  box.innerHTML = "";
 
-  const taskBox = document.getElementById("tasks");
-  taskBox.innerHTML = "";
+  days[day-1].forEach(taskText => {
+    const task = document.createElement("div");
+    task.className = "task";
 
-  dailyChallenges[day - 1].forEach(task => {
-    const div = document.createElement("div");
-    div.className = "task";
-    div.innerHTML = `<span>${task}</span><button>Done</button>`;
-    div.querySelector("button").onclick = () => {
-      div.classList.add("completed");
+    task.innerHTML = `
+      <strong>${taskText}</strong>
+      <input type="file" accept="image/*">
+      <button disabled>Complete</button>
+      <div class="preview"></div>
+    `;
+
+    const fileInput = task.querySelector("input");
+    const btn = task.querySelector("button");
+    const preview = task.querySelector(".preview");
+
+    fileInput.onchange = () => {
+      const file = fileInput.files[0];
+      if(file){
+        const img = document.createElement("img");
+        img.src = URL.createObjectURL(file);
+        preview.innerHTML = "";
+        preview.appendChild(img);
+        btn.disabled = false;
+      }
+    };
+
+    btn.onclick = () => {
+      task.classList.add("completed");
       checkDone();
     };
-    taskBox.appendChild(div);
+
+    box.appendChild(task);
   });
 
   document.getElementById("nextDay").style.display = "none";
 }
 
-// CHECK ALL DONE
-function checkDone() {
-  if (document.querySelectorAll(".completed").length === dailyChallenges[day - 1].length) {
+function checkDone(){
+  const done = document.querySelectorAll(".task.completed").length;
+  if(done === days[day-1].length){
     document.getElementById("nextDay").style.display = "block";
   }
 }
 
-// NEXT DAY
-function nextDay() {
-  if (day < 30) {
+function nextDay(){
+  if(day < 30){
     day++;
     localStorage.setItem("day", day);
     loadDay();
   } else {
     document.getElementById("challenge").innerHTML =
-      `<div class="finish">🎉 You finished all 30 days!<br>You’re a Healthy Hero 🦸‍♀️🦸‍♂️</div>`;
+      "<h2>🎉 You completed all 30 days!<br>You’re a Healthy Hero 🦸</h2>";
   }
 }
 
-if (name) show();
+if(name) show();
 </script>
 
 </body>
 </html>
+
+
+
 
 
