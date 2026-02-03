@@ -24,7 +24,7 @@ header {
 }
 
 .card {
-  max-width: 420px;
+  max-width: 440px;
   margin: auto;
   background: white;
   border-radius: 30px;
@@ -62,13 +62,23 @@ button:disabled {
   font-size: 20px;
   font-weight: 700;
   color: #388e3c;
+  margin-bottom: 10px;
 }
 
+.points {
+  text-align: center;
+  font-weight: 700;
+  color: #2e7d32;
+  margin-bottom: 15px;
+}
+
+/* TASK CARD */
 .task {
   background: #f6fffb;
   border-radius: 18px;
   padding: 14px;
-  margin: 12px 0;
+  margin: 14px 0;
+  border: 2px dashed #c8e6c9;
 }
 
 .task.completed {
@@ -77,10 +87,34 @@ button:disabled {
   pointer-events: none;
 }
 
-.task img {
+.task-title {
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.task small {
+  color: #388e3c;
+  font-weight: 700;
+}
+
+.preview-box {
   width: 100%;
+  height: 150px;
+  background: #ecfdf5;
   border-radius: 12px;
-  margin-top: 8px;
+  margin: 10px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #81c784;
+  font-size: 14px;
+  overflow: hidden;
+}
+
+.preview-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 #nextDay {
@@ -96,60 +130,64 @@ button:disabled {
 
 <div class="card">
 
+  <!-- USER -->
   <div id="user">
     <p>What’s your name?</p>
     <input id="name" placeholder="Your name 🌼">
     <button onclick="start()">Start</button>
   </div>
 
+  <!-- CHALLENGE -->
   <div id="challenge" style="display:none;">
     <div class="day" id="dayText"></div>
+    <div class="points" id="pointsText">Points: 0</div>
+
     <div id="tasks"></div>
+
     <button id="nextDay" onclick="nextDay()">Next Day ➡️</button>
   </div>
 
 </div>
 
 <script>
-// DAILY TASKS (food + drink)
+// =======================
+// DAILY TASKS + POINTS
+// =======================
 const days = [
-  ["Eat an apple 🍎", "Drink water 💧"],
-  ["Eat a banana 🍌", "Drink a smoothie 🥤"],
-  ["Eat carrots 🥕", "Drink water 💧"],
-  ["Eat yogurt 🍦", "Drink milk 🥛"],
-  ["Eat berries 🍓", "Drink water 💧"],
-  ["Eat orange 🍊", "Drink tea 🍵"],
-  ["Eat cucumber 🥒", "Drink water 💧"],
-  ["Eat avocado 🥑", "Drink smoothie 🥤"],
-  ["Eat grapes 🍇", "Drink water 💧"],
-  ["Eat eggs 🍳", "Drink milk 🥛"],
-
-  ["Eat pear 🍐", "Drink water 💧"],
-  ["Eat broccoli 🥦", "Drink tea 🍵"],
-  ["Eat mango 🥭", "Drink water 💧"],
-  ["Eat nuts 🥜", "Drink smoothie 🥤"],
-  ["Eat salad 🥗", "Drink water 💧"],
-  ["Eat cheese 🧀", "Drink milk 🥛"],
-  ["Eat kiwi 🥝", "Drink water 💧"],
-  ["Eat spinach 🥬", "Drink tea 🍵"],
-  ["Eat apple 🍎", "Drink water 💧"],
-  ["Eat banana 🍌", "Drink smoothie 🥤"],
-
-  ["Eat berries 🍓", "Drink water 💧"],
-  ["Eat yogurt 🍦", "Drink milk 🥛"],
-  ["Eat carrots 🥕", "Drink water 💧"],
-  ["Eat orange 🍊", "Drink tea 🍵"],
-  ["Eat cucumber 🥒", "Drink water 💧"],
-  ["Eat avocado 🥑", "Drink smoothie 🥤"],
-  ["Eat grapes 🍇", "Drink water 💧"],
-  ["Eat eggs 🍳", "Drink milk 🥛"],
-  ["Eat salad 🥗", "Drink water 💧"],
-  ["Celebrate 🎉", "Smile 😊"]
+  [
+    { text: "Eat an apple 🍎", points: 10 },
+    { text: "Drink water 💧", points: 5 }
+  ],
+  [
+    { text: "Eat a banana 🍌", points: 10 },
+    { text: "Drink a smoothie 🥤", points: 8 }
+  ],
+  [
+    { text: "Eat carrots 🥕", points: 10 },
+    { text: "Drink water 💧", points: 5 }
+  ],
+  [
+    { text: "Eat yogurt 🍦", points: 10 },
+    { text: "Drink milk 🥛", points: 8 }
+  ],
+  [
+    { text: "Eat berries 🍓", points: 10 },
+    { text: "Drink water 💧", points: 5 }
+  ],
+  // repeat pattern to 30 days
 ];
+
+while (days.length < 30) {
+  days.push(days[days.length % 5]);
+}
 
 let day = Number(localStorage.getItem("day")) || 1;
 let name = localStorage.getItem("name") || "";
+let totalPoints = Number(localStorage.getItem("points")) || 0;
 
+// =======================
+// START
+// =======================
 function start(){
   name = document.getElementById("name").value;
   if(!name) return;
@@ -163,39 +201,50 @@ function show(){
   loadDay();
 }
 
+// =======================
+// LOAD DAY
+// =======================
 function loadDay(){
   document.getElementById("dayText").textContent = `Day ${day} of 30 🌱`;
+  document.getElementById("pointsText").textContent = `Points: ${totalPoints}`;
+
   const box = document.getElementById("tasks");
   box.innerHTML = "";
 
-  days[day-1].forEach(taskText => {
+  days[day-1].forEach(taskData => {
     const task = document.createElement("div");
     task.className = "task";
 
     task.innerHTML = `
-      <strong>${taskText}</strong>
+      <div class="task-title">${taskData.text}</div>
+      <small>+${taskData.points} points</small>
+
+      <div class="preview-box">📸 Upload photo proof</div>
+
       <input type="file" accept="image/*">
-      <button disabled>Complete</button>
-      <div class="preview"></div>
+      <button disabled>Complete Task</button>
     `;
 
     const fileInput = task.querySelector("input");
     const btn = task.querySelector("button");
-    const preview = task.querySelector(".preview");
+    const previewBox = task.querySelector(".preview-box");
 
     fileInput.onchange = () => {
       const file = fileInput.files[0];
       if(file){
         const img = document.createElement("img");
         img.src = URL.createObjectURL(file);
-        preview.innerHTML = "";
-        preview.appendChild(img);
+        previewBox.innerHTML = "";
+        previewBox.appendChild(img);
         btn.disabled = false;
       }
     };
 
     btn.onclick = () => {
       task.classList.add("completed");
+      totalPoints += taskData.points;
+      localStorage.setItem("points", totalPoints);
+      document.getElementById("pointsText").textContent = `Points: ${totalPoints}`;
       checkDone();
     };
 
@@ -205,13 +254,19 @@ function loadDay(){
   document.getElementById("nextDay").style.display = "none";
 }
 
+// =======================
+// CHECK DAY COMPLETE
+// =======================
 function checkDone(){
-  const done = document.querySelectorAll(".task.completed").length;
-  if(done === days[day-1].length){
+  const completed = document.querySelectorAll(".task.completed").length;
+  if(completed === days[day-1].length){
     document.getElementById("nextDay").style.display = "block";
   }
 }
 
+// =======================
+// NEXT DAY
+// =======================
 function nextDay(){
   if(day < 30){
     day++;
@@ -219,7 +274,7 @@ function nextDay(){
     loadDay();
   } else {
     document.getElementById("challenge").innerHTML =
-      "<h2>🎉 You completed all 30 days!<br>You’re a Healthy Hero 🦸</h2>";
+      `<h2>🎉 You finished all 30 days!<br>Total Points: ${totalPoints}</h2>`;
   }
 }
 
@@ -228,6 +283,7 @@ if(name) show();
 
 </body>
 </html>
+
 
 
 
